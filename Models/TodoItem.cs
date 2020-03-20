@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 
-namespace DotNetCoreConsoleApp
+namespace ClankerAPI.Models
 {
     public class TodoItem
     {

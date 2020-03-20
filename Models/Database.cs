@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
  * !!! in this class the transactions are not implemented yet !!!
  */
 
-namespace DotNetCoreConsoleApp
+namespace ClankerAPI.Models
 {
     class Database
     {
