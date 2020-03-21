@@ -13,34 +13,49 @@ namespace ClankerAPI.Models
         public string DataFine { get; set; }
         private Database DB = new Database("127.0.0.1", "todoprova");
         private const string T = "tab_attivita";
-        private const string cID = "id";
-        private const string cNOME = "nome";
-        private const string cSTATO = "stato";
-        private const string cINIZIO = "inizio";
-        private const string cFINE = "fine";
+        private const string CId = "id";
+        private const string CNome = "nome";
+        private const string CStato = "stato";
+        private const string CInizio = "inizio";
+        private const string CFine = "fine";
 
         public bool LoadFromDb()
         {
             bool risposta = true;
-            string sql = $"SELECT * FROM `{T}`";
+            string sql = "";
             MySqlDataReader result;
             try
             {
                 DB.Open();
-                if(Id > 0){
-                    sql += ($" WHERE `{cID}` = {Convert.ToString(Id)};");
-                }
-                result = DB.SendQuery(sql);
-                if(result.HasRows){
-                    while(result.Read()){
-                        Id = Convert.ToInt64(result[cID]);
-                        Name = Convert.ToString(result[cNOME]);
-                        Stato = Convert.ToString(result[cSTATO]);
-                        DataInizio = Convert.ToString(result[cINIZIO]);
-                        DataFine = Convert.ToString(result[cFINE]);
+                if (Id == 0) {
+                    sql = $"SELECT * FROM `{T}` WHERE id = (SELECT MAX(`{CId}`) from `{T}`);";
+                    result = DB.SendQuery(sql);
+                    if (result.HasRows){
+                        while (result.Read()){
+                            Id = Convert.ToInt64(result[CId]);
+                            Name = Convert.ToString(result[CNome]);
+                            Stato = Convert.ToString(result[CStato]);
+                            DataInizio = Convert.ToString(result[CInizio]);
+                            DataFine = Convert.ToString(result[CFine]);
+                        }
+                    }else{
+                        risposta = false;
                     }
-                }else{
-                    risposta = false;
+                }
+                if(Id > 0){
+                    sql = $"SELECT * FROM `{T}` WHERE `{CId}` = {Convert.ToString(Id)};";
+                    result = DB.SendQuery(sql);
+                    if(result.HasRows){
+                        while(result.Read()){
+                            Id = Convert.ToInt64(result[CId]);
+                            Name = Convert.ToString(result[CNome]);
+                            Stato = Convert.ToString(result[CStato]);
+                            DataInizio = Convert.ToString(result[CInizio]);
+                            DataFine = Convert.ToString(result[CFine]);
+                        }
+                    }else{
+                        risposta = false;
+                    }
                 }
                 DB.Close();
             }
@@ -59,17 +74,17 @@ namespace ClankerAPI.Models
             {
                 DB.Open();
                 if(Id == 0){
-                    string sql = $"INSERT INTO `{T}` (`{cID}`, `{cNOME}`, `{cSTATO}`, `{cINIZIO}`, `{cFINE}`)";
+                    string sql = $"INSERT INTO `{T}` (`{CId}`, `{CNome}`, `{CStato}`, `{CInizio}`, `{CFine}`)";
                     sql += $" VALUES (NULL, '{Name}', {Stato}, '{DataInizio}', '{DataFine}');";
                     DB.SendNonQuery(sql);
                 }
                 if(Id > 0){
                     string sql = $"UPDATE `{T}`SET ";
-                    sql += $"`{cNOME}` = '{Name}', ";
-                    sql += $"`{cSTATO}` = {Stato}, ";
-                    sql += $"`{cINIZIO}` = '{DataInizio}', ";
-                    sql += $"`{cFINE}` = '{DataFine}' ";
-                    sql += $"WHERE `{T}`.`{cID}` = {Id};";
+                    sql += $"`{CNome}` = '{Name}', ";
+                    sql += $"`{CStato}` = {Stato}, ";
+                    sql += $"`{CInizio}` = '{DataInizio}', ";
+                    sql += $"`{CFine}` = '{DataFine}' ";
+                    sql += $"WHERE `{T}`.`{CId}` = {Id};";
                     DB.SendNonQuery(sql);
                 }
                 DB.Close();
@@ -89,7 +104,7 @@ namespace ClankerAPI.Models
             {
                 DB.Open();
                 if(Id > 0){
-                    DB.SendNonQuery($"DELETE FROM `{T}` WHERE `{T}`.`{cID}` = {Id}");
+                    DB.SendNonQuery($"DELETE FROM `{T}` WHERE `{T}`.`{CId}` = {Id}");
                 }else{
                     risposta = false;
                 }
@@ -113,15 +128,14 @@ namespace ClankerAPI.Models
 
             while(result.Read()){
                 queryResult.Add(new TodoItem{
-                    Id = Convert.ToInt64(result[cID]),
-                    Name = Convert.ToString(result[cNOME]),
-                    Stato = Convert.ToString(result[cSTATO]),
-                    DataInizio = Convert.ToString(result[cINIZIO]),
-                    DataFine = Convert.ToString(result[cFINE])
+                    Id = Convert.ToInt64(result[CId]),
+                    Name = Convert.ToString(result[CNome]),
+                    Stato = Convert.ToString(result[CStato]),
+                    DataInizio = Convert.ToString(result[CInizio]),
+                    DataFine = Convert.ToString(result[CFine])
                 });
             }
             DB.Close();
-            DB = null;
             
             return queryResult; 
         }
