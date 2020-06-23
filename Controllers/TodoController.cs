@@ -35,9 +35,8 @@ namespace ClankerAPI.Controllers
         
             if (td != null){
                 return td;
-            }else{
-                return NotFound();
             }
+            return NotFound();
         }
 
         [HttpPost]
@@ -63,10 +62,10 @@ namespace ClankerAPI.Controllers
             if (id != td.Id){
                 return BadRequest();
             }
-
             if (!td.SaveToDb()){
                 return BadRequest();
             }
+            DatabaseRecords = TodoItem.SelectAllRecords();
             
             return NoContent();
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
+using ClankerAPI.Utility;
 
 namespace ClankerAPI.Models
 {
@@ -21,7 +22,7 @@ namespace ClankerAPI.Models
 
         public bool LoadFromDb()
         {
-            bool risposta = true;
+            bool response = true;
             string sql = "";
             MySqlDataReader result;
             try
@@ -39,7 +40,7 @@ namespace ClankerAPI.Models
                             DataFine = Convert.ToString(result[CFine]);
                         }
                     }else{
-                        risposta = false;
+                        response = false;
                     }
                 }
                 if(Id > 0){
@@ -54,22 +55,22 @@ namespace ClankerAPI.Models
                             DataFine = Convert.ToString(result[CFine]);
                         }
                     }else{
-                        risposta = false;
+                        response = false;
                     }
                 }
                 DB.Close();
             }
             catch (MySqlException)
             {
-                risposta = false;
+                response = false;
             }
             
-            return risposta;
+            return response;
         }
 
         public bool SaveToDb()
         {
-            bool risposta = true;
+            bool response = true;
             try
             {
                 DB.Open();
@@ -91,31 +92,31 @@ namespace ClankerAPI.Models
             }
             catch (MySqlException)
             {
-                risposta = false;
+                response = false;
             }
 
-            return risposta;
+            return response;
         }
 
         public bool DeleteFromDb()
         {
-            bool risposta = true;
+            bool response = true;
             try
             {
                 DB.Open();
                 if(Id > 0){
                     DB.SendNonQuery($"DELETE FROM `{T}` WHERE `{T}`.`{CId}` = {Id}");
                 }else{
-                    risposta = false;
+                    response = false;
                 }
                 DB.Close();
             }
             catch (MySqlException)
             {
-                risposta = false;
+                response = false;
             }
 
-            return risposta;
+            return response;
         }
 
         /*prende tutti i record dalla tabella*/
